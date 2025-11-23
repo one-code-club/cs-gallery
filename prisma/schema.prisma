@@ -1,0 +1,46 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  TA
+  ADMIN
+}
+
+model User {
+  ipAddress   String   @id @unique
+  nickname    String
+  role        Role
+  createdAt   DateTime @default(now())
+  lastLoginAt DateTime @updatedAt
+
+  submission  Submission?
+  votes       Vote[]
+}
+
+model Submission {
+  id        Int      @id @default(autoincrement())
+  url       String
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [ipAddress])
+  votes     Vote[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vote {
+  id           Int        @id @default(autoincrement())
+  submissionId Int
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  voterIp      String
+  voter        User       @relation(fields: [voterIp], references: [ipAddress])
+  createdAt    DateTime   @default(now())
+
+  @@unique([submissionId, voterIp])
+}
