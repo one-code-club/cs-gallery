@@ -6,10 +6,15 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useActionState } from 'react'
 
+type SubmissionResult = Awaited<ReturnType<typeof submitUrl>>
+
 export function SubmissionForm({ initialUrl }: { initialUrl?: string | null }) {
-  const [state, formAction, isPending] = useActionState(async (_prev: any, formData: FormData) => {
-     return await submitUrl(formData)
-  }, {})
+  const [state, formAction, isPending] = useActionState<SubmissionResult | undefined, FormData>(
+    async (_prev, formData) => {
+      return await submitUrl(formData)
+    },
+    undefined
+  )
 
   return (
     <Card>
