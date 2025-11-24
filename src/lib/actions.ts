@@ -258,6 +258,33 @@ export async function clearAllSubmissions() {
   }
 }
 
+export async function clearAllUsers() {
+  const session = await getSession()
+  if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' }
+
+  try {
+    // Clean up everything
+    await prisma.$transaction([
+      prisma.vote.deleteMany({}),
+      prisma.submission.deleteMany({}),
+      prisma.user.deleteMany({})
+    ])
+    
+    revalidatePath('/voting')
+    revalidatePath('/gallery')
+    revalidatePath('/admin')
+    // Since users are deleted, the current session user is also gone from DB.
+    // But the cookie remains until logout. 
+    // However, any subsequent request checking DB for user validity might fail 
+    // if we added such checks. Currently getSession only decodes cookie.
+    // But logging out might be appropriate or at least refreshing.
+    return { success: true }
+  } catch (e) {
+    console.error(e)
+    return { error: 'Failed to clear all users' }
+  }
+}
+
 export async function getGalleryData() {
   // Public or Authenticated
   const submissions = await prisma.submission.findMany({

@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { resetVotes, clearAllSubmissions } from '@/lib/actions'
+import { resetVotes, clearAllSubmissions, clearAllUsers } from '@/lib/actions'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import {
@@ -46,11 +46,39 @@ export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
         }
     }
 
+    const handleClearUsers = async () => {
+        const res = await clearAllUsers()
+        if (res.success) {
+            alert("All users cleared successfully")
+            router.refresh()
+        } else {
+            alert("Error clearing users")
+        }
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">Admin Dashboard</h1>
                 <div className="flex gap-2">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive">Clear All Users</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete all users, submissions, and votes from the database.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleClearUsers}>Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button variant="destructive">Clear All Submissions</Button>
