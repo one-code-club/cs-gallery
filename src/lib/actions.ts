@@ -140,13 +140,20 @@ export async function submitUrl(formData: FormData) {
   }
 }
 
+type SubmissionWithVotes = {
+  id: number
+  url: string
+  user: { nickname: string }
+  votes: { voterIp: string }[]
+}
+
 export async function getSubmissionsForTA() {
   const session = await getSession()
   if (!session || session.role !== 'TA') return []
 
   // Get all submissions and include votes
   // We need to know if CURRENT TA voted.
-  const submissions = await prisma.submission.findMany({
+  const submissions: SubmissionWithVotes[] = await prisma.submission.findMany({
     include: {
       user: {
         select: { nickname: true }
