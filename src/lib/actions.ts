@@ -3,10 +3,10 @@
 import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { prisma } from './prisma'
-import { Role } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 
 const COOKIE_NAME = 'gallery_session'
+type Role = 'STUDENT' | 'TA' | 'ADMIN'
 
 async function getClientIp() {
   const headersList = await headers()
