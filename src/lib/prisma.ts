@@ -10,11 +10,7 @@ type GlobalPrisma = {
 
 const globalForPrisma = global as unknown as GlobalPrisma
 
-const connectionString = process.env.DATABASE_URL
-
-if (!connectionString) {
-  throw new Error('DATABASE_URL is not defined')
-}
+const connectionString = process.env.DATABASE_URL || "postgresql://dummy:dummy@localhost:5432/dummy"
 
 const pool =
   globalForPrisma.pool ||
