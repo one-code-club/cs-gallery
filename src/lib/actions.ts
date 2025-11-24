@@ -4,6 +4,7 @@ import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { prisma } from './prisma'
 import { revalidatePath } from 'next/cache'
+import type { Prisma } from '@prisma/client'
 
 const COOKIE_NAME = 'gallery_session'
 type Role = 'STUDENT' | 'TA' | 'ADMIN'
@@ -183,7 +184,7 @@ export async function saveVotes(submissionIds: number[]) {
 
   try {
     // Transaction: Delete all previous votes by this TA, then add new ones
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Remove all votes by this TA
       await tx.vote.deleteMany({
         where: { voterIp: session.ip }
