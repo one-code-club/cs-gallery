@@ -21,6 +21,11 @@ export async function Header() {
               <Button asChild variant="ghost" size="sm">
                 <Link href="/gallery">Gallery</Link>
               </Button>
+              {(session.role === 'TA' || session.role === 'ADMIN') && (
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/voting">Vote</Link>
+                </Button>
+              )}
               <form action={logout}>
                   <Button variant="outline" size="sm">Logout</Button>
               </form>

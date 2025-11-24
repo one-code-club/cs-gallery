@@ -8,7 +8,8 @@ export default async function VotingPage() {
   if (session.role !== 'TA') redirect('/') // Redirect Student/Admin to their home
 
   const submissions = await getSubmissionsForTA()
+  const maxVotes = parseInt(process.env.VOTE_MAX || '5', 10)
 
-  return <VotingInterface initialData={submissions} />
+  return <VotingInterface initialData={submissions} maxVotes={maxVotes} />
 }
 

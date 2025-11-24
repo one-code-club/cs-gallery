@@ -15,7 +15,7 @@ interface Submission {
   votedByMe: boolean
 }
 
-export function VotingInterface({ initialData }: { initialData: Submission[] }) {
+export function VotingInterface({ initialData, maxVotes }: { initialData: Submission[], maxVotes: number }) {
   const [submissions, setSubmissions] = useState<Submission[]>(initialData)
   
   // Initialize selectedIds based on what the server says "I voted for"
@@ -37,8 +37,8 @@ export function VotingInterface({ initialData }: { initialData: Submission[] }) 
     if (newSelected.has(id)) {
       newSelected.delete(id)
     } else {
-      if (newSelected.size >= 5) {
-        alert("You can only vote for up to 5 submissions.")
+      if (newSelected.size >= maxVotes) {
+        alert(`You can only vote for up to ${maxVotes} submissions.`)
         return
       }
       newSelected.add(id)
@@ -75,7 +75,7 @@ export function VotingInterface({ initialData }: { initialData: Submission[] }) 
         <h2 className="text-xl font-bold">Voting Page</h2>
         <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
-                Votes: {selectedIds.size} / 5
+                Votes: {selectedIds.size} / {maxVotes}
             </span>
             <Button onClick={handleSave} disabled={isSaving}>
             {isSaving ? 'Saving...' : 'Submit Votes'}

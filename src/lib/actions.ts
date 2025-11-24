@@ -171,7 +171,8 @@ export async function saveVotes(submissionIds: number[]) {
   const session = await getSession()
   if (!session || session.role !== 'TA') return { error: 'Unauthorized' }
 
-  if (submissionIds.length > 5) return { error: 'Max 5 votes allowed' }
+  const maxVotes = parseInt(process.env.VOTE_MAX || '5', 10)
+  if (submissionIds.length > maxVotes) return { error: `Max ${maxVotes} votes allowed` }
 
   try {
     // Transaction: Delete all previous votes by this TA, then add new ones
@@ -265,12 +266,12 @@ export async function getGalleryData() {
     voteCount: s.votes.length
   }))
 
-  // Sort by votes desc? Requirement says "sorted by Nickname" for TA, but Gallery? 
-  // "Show all submitted URLs in cards... Contains... The number of votes".
-  // Usually gallery is sorted by votes or shuffle. 
-  // No specific sort order in reqs for Gallery. "Admin... Users sorted by...".
-  // TA "Card items are sorted by Nickname".
-  // I will sort by Nickname for consistency, or Votes. I'll stick to Nickname unless asked.
-  return data.sort((a, b) => a.nickname.localeCompare(b.nickname))
+  // Sort by votes descending, then nickname ascending
+  return data.sort((a, b) => {
+    if (b.voteCount !== a.voteCount) {
+      return b.voteCount - a.voteCount
+    }
+    return a.nickname.localeCompare(b.nickname)
+  })
 }
 
