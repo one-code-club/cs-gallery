@@ -2,6 +2,7 @@ import { getSession } from '@/lib/actions'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { SubmissionForm } from '@/components/feature/SubmissionForm'
+import { PageTitle } from '@/components/feature/PageTitle'
 
 export default async function HomePage() {
   const session = await getSession()
@@ -15,7 +16,7 @@ export default async function HomePage() {
 
   return (
     <div className="max-w-lg mx-auto mt-10">
-       <h1 className="text-3xl font-bold mb-6 text-center">Submit Your Work</h1>
+       <PageTitle titleKey="submission" className="text-3xl font-bold mb-6 text-center" />
        <SubmissionForm initialUrl={submission?.url} initialLocation={submission?.location} />
     </div>
   )

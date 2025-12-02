@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { useLanguage } from '@/components/language-provider'
 
 interface User {
     ipAddress: string
@@ -25,92 +26,93 @@ interface User {
 
 export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
     const router = useRouter()
+    const { t } = useLanguage()
 
     const handleReset = async () => {
         const res = await resetVotes()
         if (res.success) {
-            alert("Votes reset successfully")
+            alert(t.admin.votesResetSuccess)
             router.refresh()
         } else {
-            alert("Error resetting votes")
+            alert(t.admin.votesResetError)
         }
     }
 
     const handleClearSubmissions = async () => {
         const res = await clearAllSubmissions()
         if (res.success) {
-            alert("All submissions cleared successfully")
+            alert(t.admin.submissionsClearedSuccess)
             router.refresh()
         } else {
-            alert("Error clearing submissions")
+            alert(t.admin.submissionsClearedError)
         }
     }
 
     const handleClearUsers = async () => {
         const res = await clearAllUsers()
         if (res.success) {
-            alert("All users cleared successfully")
+            alert(t.admin.usersClearedSuccess)
             router.refresh()
         } else {
-            alert("Error clearing users")
+            alert(t.admin.usersClearedError)
         }
     }
 
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+                <h1 className="text-2xl font-bold">{t.admin.title}</h1>
                 <div className="flex gap-2">
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive">Clear All Users</Button>
+                            <Button variant="destructive">{t.admin.clearAllUsers}</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogTitle>{t.admin.confirmTitle}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete all users, submissions, and votes from the database.
+                                    {t.admin.confirmClearUsers}
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleClearUsers}>Continue</AlertDialogAction>
+                                <AlertDialogCancel>{t.admin.cancel}</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleClearUsers}>{t.admin.continue}</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
 
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive">Clear All Submissions</Button>
+                            <Button variant="destructive">{t.admin.clearAllSubmissions}</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogTitle>{t.admin.confirmTitle}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete all submissions and their associated votes from the database.
+                                    {t.admin.confirmClearSubmissions}
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleClearSubmissions}>Continue</AlertDialogAction>
+                                <AlertDialogCancel>{t.admin.cancel}</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleClearSubmissions}>{t.admin.continue}</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
 
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive">Reset All Votes</Button>
+                            <Button variant="destructive">{t.admin.resetAllVotes}</Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogTitle>{t.admin.confirmTitle}</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete all votes from the database.
+                                    {t.admin.confirmResetVotes}
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleReset}>Continue</AlertDialogAction>
+                                <AlertDialogCancel>{t.admin.cancel}</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleReset}>{t.admin.continue}</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
@@ -121,10 +123,10 @@ export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Role</TableHead>
-                            <TableHead>Nickname</TableHead>
-                            <TableHead>IP Address</TableHead>
-                            <TableHead>Submitted</TableHead>
+                            <TableHead>{t.admin.tableRole}</TableHead>
+                            <TableHead>{t.admin.tableNickname}</TableHead>
+                            <TableHead>{t.admin.tableIpAddress}</TableHead>
+                            <TableHead>{t.admin.tableSubmitted}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -133,7 +135,7 @@ export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
                                 <TableCell className="font-medium">{user.role}</TableCell>
                                 <TableCell>{user.nickname}</TableCell>
                                 <TableCell className="font-mono text-xs text-muted-foreground">{user.ipAddress}</TableCell>
-                                <TableCell>{user.submission ? "Yes" : "No"}</TableCell>
+                                <TableCell>{user.submission ? t.admin.yes : t.admin.no}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -142,4 +144,3 @@ export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
         </div>
     )
 }
-

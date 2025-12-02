@@ -6,6 +6,8 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/components/language-provider'
+import { formatMessage } from '@/lib/translations'
 
 interface Submission {
   id: number
@@ -17,6 +19,7 @@ interface Submission {
 
 export function VotingInterface({ initialData, maxVotes }: { initialData: Submission[], maxVotes: number }) {
   const [submissions, setSubmissions] = useState<Submission[]>(initialData)
+  const { t } = useLanguage()
   
   // Initialize selectedIds based on what the server says "I voted for"
   const [selectedIds, setSelectedIds] = useState<Set<number>>(() => 
@@ -38,7 +41,7 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
       newSelected.delete(id)
     } else {
       if (newSelected.size >= maxVotes) {
-        alert(`You can only vote for up to ${maxVotes} submissions.`)
+        alert(formatMessage(t.voting.maxVotesAlert, { max: maxVotes }))
         return
       }
       newSelected.add(id)
@@ -50,7 +53,16 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
     setIsSaving(true)
     const result = await saveVotes(Array.from(selectedIds))
     if (result.error) {
-      alert(result.error)
+      // Translate error if errorKey is available
+      if (result.errorKey === 'maxVotesAllowed' && result.errorParams?.max) {
+        alert(formatMessage(t.errors.maxVotesAllowed, { max: result.errorParams.max }))
+      } else if (result.errorKey === 'unauthorized') {
+        alert(t.errors.unauthorized)
+      } else if (result.errorKey === 'failedToSaveVotes') {
+        alert(t.errors.failedToSaveVotes)
+      } else {
+        alert(result.error)
+      }
     } else {
         const data = await getSubmissionsForTA()
         setSubmissions(data)
@@ -72,13 +84,13 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between sticky top-4 z-10 bg-background/80 backdrop-blur-md p-4 rounded-lg border shadow-sm">
-        <h2 className="text-xl font-bold">Voting Page</h2>
+        <h2 className="text-xl font-bold">{t.voting.title}</h2>
         <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
-                Votes: {selectedIds.size} / {maxVotes}
+                {t.voting.votes} {selectedIds.size} / {maxVotes}
             </span>
             <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? 'Saving...' : 'Submit Votes'}
+            {isSaving ? t.voting.saving : t.voting.submitButton}
             </Button>
         </div>
       </div>
@@ -101,7 +113,7 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
                     </CardContent>
                     <CardFooter className="bg-muted/30 p-4 flex justify-between items-center border-t">
                         <span className="font-bold">
-                            {getDisplayCount(sub)} <span className="text-xs font-normal text-muted-foreground">votes</span>
+                            {getDisplayCount(sub)} <span className="text-xs font-normal text-muted-foreground">{t.voting.votesLabel}</span>
                         </span>
                         <button 
                             onClick={() => toggleVote(sub.id)}
@@ -122,4 +134,3 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
     </div>
   )
 }
-

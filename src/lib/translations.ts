@@ -1,0 +1,212 @@
+export type Language = 'en' | 'ja'
+
+export const translations = {
+  en: {
+    // Header
+    header: {
+      title: 'Gallery - CS in English',
+      gallery: 'Gallery',
+      vote: 'Vote',
+      logout: 'Logout',
+      login: 'Login',
+    },
+    // Login Page
+    login: {
+      title: 'Gallery Login',
+      description: 'Enter your nickname to continue',
+      nicknameLabel: 'Nickname',
+      nicknamePlaceholder: 'Display Name',
+      submitButton: 'Login',
+      submitting: 'Logging in...',
+      unexpectedError: 'An unexpected error occurred',
+    },
+    // Submission Form
+    submission: {
+      pageTitle: 'Submit Your Work',
+      cardTitle: 'Enter your URL',
+      urlPlaceholder: 'Enter a URL for your work',
+      locationLabel: 'Location',
+      locationPlaceholder: 'Select your location',
+      submitButton: 'Submit',
+      updateButton: 'Update Submission',
+      submitting: 'Submitting...',
+      successMessage: 'Submission saved!',
+      currentSubmission: 'Current Submission:',
+      locationDisplay: 'Location:',
+    },
+    // Gallery
+    gallery: {
+      title: 'Gallery',
+    },
+    // Voting
+    voting: {
+      title: 'Voting Page',
+      votes: 'Votes:',
+      submitButton: 'Submit Votes',
+      saving: 'Saving...',
+      votesLabel: 'votes',
+      maxVotesAlert: 'You can only vote for up to {max} submissions.',
+    },
+    // Admin
+    admin: {
+      title: 'Admin Dashboard',
+      clearAllUsers: 'Clear All Users',
+      clearAllSubmissions: 'Clear All Submissions',
+      resetAllVotes: 'Reset All Votes',
+      confirmTitle: 'Are you absolutely sure?',
+      confirmClearUsers: 'This action cannot be undone. This will permanently delete all users, submissions, and votes from the database.',
+      confirmClearSubmissions: 'This action cannot be undone. This will permanently delete all submissions and their associated votes from the database.',
+      confirmResetVotes: 'This action cannot be undone. This will permanently delete all votes from the database.',
+      cancel: 'Cancel',
+      continue: 'Continue',
+      tableRole: 'Role',
+      tableNickname: 'Nickname',
+      tableIpAddress: 'IP Address',
+      tableSubmitted: 'Submitted',
+      yes: 'Yes',
+      no: 'No',
+      // Alert messages
+      votesResetSuccess: 'Votes reset successfully',
+      votesResetError: 'Error resetting votes',
+      submissionsClearedSuccess: 'All submissions cleared successfully',
+      submissionsClearedError: 'Error clearing submissions',
+      usersClearedSuccess: 'All users cleared successfully',
+      usersClearedError: 'Error clearing users',
+    },
+    // Errors (for server actions)
+    errors: {
+      nicknameRequired: 'Nickname is required',
+      invalidNickname: 'Invalid nickname',
+      databaseError: 'Database error during login',
+      unauthorized: 'Unauthorized',
+      urlRequired: 'URL is required',
+      locationRequired: 'Location is required',
+      invalidLocation: 'Invalid location',
+      urlMustContain: 'URL must contain "{text}"',
+      failedToSubmit: 'Failed to submit',
+      maxVotesAllowed: 'Max {max} votes allowed',
+      failedToSaveVotes: 'Failed to save votes',
+      failedToResetVotes: 'Failed to reset votes',
+      failedToClearSubmissions: 'Failed to clear all submissions',
+      failedToClearUsers: 'Failed to clear all users',
+    },
+    // Language toggle
+    language: {
+      toggle: 'EN / 日本語',
+      english: 'EN',
+      japanese: '日本語',
+    },
+  },
+  ja: {
+    // Header
+    header: {
+      title: 'ギャラリー - CS in English',
+      gallery: 'ギャラリー',
+      vote: '投票',
+      logout: 'ログアウト',
+      login: 'ログイン',
+    },
+    // Login Page
+    login: {
+      title: 'ギャラリー ログイン',
+      description: 'ニックネームを入力してください',
+      nicknameLabel: 'ニックネーム',
+      nicknamePlaceholder: '表示名',
+      submitButton: 'ログイン',
+      submitting: 'ログイン中...',
+      unexpectedError: '予期しないエラーが発生しました',
+    },
+    // Submission Form
+    submission: {
+      pageTitle: '作品を提出',
+      cardTitle: 'URLを入力',
+      urlPlaceholder: '作品のURLを入力してください',
+      locationLabel: '場所',
+      locationPlaceholder: '場所を選択',
+      submitButton: '提出',
+      updateButton: '提出を更新',
+      submitting: '提出中...',
+      successMessage: '提出が保存されました！',
+      currentSubmission: '現在の提出:',
+      locationDisplay: '場所:',
+    },
+    // Gallery
+    gallery: {
+      title: 'ギャラリー',
+    },
+    // Voting
+    voting: {
+      title: '投票ページ',
+      votes: '投票数:',
+      submitButton: '投票を確定',
+      saving: '保存中...',
+      votesLabel: '票',
+      maxVotesAlert: '最大{max}件まで投票できます。',
+    },
+    // Admin
+    admin: {
+      title: '管理ダッシュボード',
+      clearAllUsers: '全ユーザーを削除',
+      clearAllSubmissions: '全提出を削除',
+      resetAllVotes: '全投票をリセット',
+      confirmTitle: '本当によろしいですか？',
+      confirmClearUsers: 'この操作は取り消せません。すべてのユーザー、提出、投票がデータベースから完全に削除されます。',
+      confirmClearSubmissions: 'この操作は取り消せません。すべての提出とそれに関連する投票がデータベースから完全に削除されます。',
+      confirmResetVotes: 'この操作は取り消せません。すべての投票がデータベースから完全に削除されます。',
+      cancel: 'キャンセル',
+      continue: '続行',
+      tableRole: '役割',
+      tableNickname: 'ニックネーム',
+      tableIpAddress: 'IPアドレス',
+      tableSubmitted: '提出済み',
+      yes: 'はい',
+      no: 'いいえ',
+      // Alert messages
+      votesResetSuccess: '投票がリセットされました',
+      votesResetError: '投票のリセットに失敗しました',
+      submissionsClearedSuccess: 'すべての提出が削除されました',
+      submissionsClearedError: '提出の削除に失敗しました',
+      usersClearedSuccess: 'すべてのユーザーが削除されました',
+      usersClearedError: 'ユーザーの削除に失敗しました',
+    },
+    // Errors (for server actions)
+    errors: {
+      nicknameRequired: 'ニックネームは必須です',
+      invalidNickname: '無効なニックネームです',
+      databaseError: 'ログイン中にデータベースエラーが発生しました',
+      unauthorized: '権限がありません',
+      urlRequired: 'URLは必須です',
+      locationRequired: '場所は必須です',
+      invalidLocation: '無効な場所です',
+      urlMustContain: 'URLには「{text}」を含める必要があります',
+      failedToSubmit: '提出に失敗しました',
+      maxVotesAllowed: '最大{max}票まで投票できます',
+      failedToSaveVotes: '投票の保存に失敗しました',
+      failedToResetVotes: '投票のリセットに失敗しました',
+      failedToClearSubmissions: '提出の削除に失敗しました',
+      failedToClearUsers: 'ユーザーの削除に失敗しました',
+    },
+    // Language toggle
+    language: {
+      toggle: 'EN / 日本語',
+      english: 'EN',
+      japanese: '日本語',
+    },
+  },
+} as const
+
+export type TranslationKeys = typeof translations.en
+
+export function getTranslations(lang: Language): TranslationKeys {
+  return translations[lang]
+}
+
+// Helper to get error message with placeholder replacement
+export function formatMessage(message: string, replacements: Record<string, string | number>): string {
+  let result = message
+  for (const [key, value] of Object.entries(replacements)) {
+    result = result.replace(`{${key}}`, String(value))
+  }
+  return result
+}
+

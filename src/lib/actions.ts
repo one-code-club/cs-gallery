@@ -9,6 +9,17 @@ import type { Prisma } from '@prisma/client'
 const COOKIE_NAME = 'gallery_session'
 type Role = 'STUDENT' | 'TA' | 'ADMIN'
 
+// Error response type for i18n support
+type ErrorResponse = {
+  error: string
+  errorKey?: string
+  errorParams?: Record<string, string | number>
+}
+
+type SuccessResponse = {
+  success: true
+}
+
 async function getClientIp() {
   const headersList = await headers()
   const forwardedFor = headersList.get('x-forwarded-for')
@@ -33,10 +44,10 @@ export async function getSession() {
   }
 }
 
-export async function login(formData: FormData) {
+export async function login(formData: FormData): Promise<ErrorResponse | void> {
   const nicknameInput = formData.get('nickname') as string
   if (!nicknameInput || nicknameInput.trim() === '') {
-    return { error: 'Nickname is required' }
+    return { error: 'Nickname is required', errorKey: 'nicknameRequired' }
   }
 
   const ip = await getClientIp()
@@ -67,7 +78,7 @@ export async function login(formData: FormData) {
   }
 
   if (!cleanNickname) {
-      return { error: 'Invalid nickname' }
+      return { error: 'Invalid nickname', errorKey: 'invalidNickname' }
   }
 
   try {
@@ -87,7 +98,7 @@ export async function login(formData: FormData) {
     })
   } catch (e) {
     console.error('Login error', e)
-    return { error: 'Database error during login' }
+    return { error: 'Database error during login', errorKey: 'databaseError' }
   }
 
   const cookieStore = await cookies()
@@ -110,26 +121,30 @@ export async function logout() {
   redirect('/login')
 }
 
-export async function submitUrl(formData: FormData) {
+export async function submitUrl(formData: FormData): Promise<ErrorResponse | SuccessResponse> {
   const session = await getSession()
   if (!session || session.role !== 'STUDENT') {
-    return { error: 'Unauthorized' }
+    return { error: 'Unauthorized', errorKey: 'unauthorized' }
   }
 
   const url = formData.get('url') as string
-  if (!url) return { error: 'URL is required' }
+  if (!url) return { error: 'URL is required', errorKey: 'urlRequired' }
 
   const location = formData.get('location') as string
-  if (!location) return { error: 'Location is required' }
+  if (!location) return { error: 'Location is required', errorKey: 'locationRequired' }
 
-  const validLocations = ['Zoom Online', 'Kawasaki', 'Kumamoto', 'Noto', 'Hakui']
+  const validLocations = ['Zoom Online', 'Kawasaki', 'Kumamoto', 'Kobe', 'Noto', 'Hakui']
   if (!validLocations.includes(location)) {
-    return { error: 'Invalid location' }
+    return { error: 'Invalid location', errorKey: 'invalidLocation' }
   }
 
   const requiredText = process.env.REQUIRED_TEXT
   if (requiredText && !url.includes(requiredText)) {
-    return { error: `URL must contain "${requiredText}"` }
+    return { 
+      error: `URL must contain "${requiredText}"`, 
+      errorKey: 'urlMustContain',
+      errorParams: { text: requiredText }
+    }
   }
 
   try {
@@ -146,7 +161,7 @@ export async function submitUrl(formData: FormData) {
     return { success: true }
   } catch (e) {
     console.error(e)
-    return { error: 'Failed to submit' }
+    return { error: 'Failed to submit', errorKey: 'failedToSubmit' }
   }
 }
 
@@ -184,12 +199,18 @@ export async function getSubmissionsForTA() {
   }))
 }
 
-export async function saveVotes(submissionIds: number[]) {
+export async function saveVotes(submissionIds: number[]): Promise<ErrorResponse | SuccessResponse> {
   const session = await getSession()
-  if (!session || session.role !== 'TA') return { error: 'Unauthorized' }
+  if (!session || session.role !== 'TA') return { error: 'Unauthorized', errorKey: 'unauthorized' }
 
   const maxVotes = parseInt(process.env.VOTE_MAX || '5', 10)
-  if (submissionIds.length > maxVotes) return { error: `Max ${maxVotes} votes allowed` }
+  if (submissionIds.length > maxVotes) {
+    return { 
+      error: `Max ${maxVotes} votes allowed`, 
+      errorKey: 'maxVotesAllowed',
+      errorParams: { max: maxVotes }
+    }
+  }
 
   try {
     // Transaction: Delete all previous votes by this TA, then add new ones
@@ -215,7 +236,7 @@ export async function saveVotes(submissionIds: number[]) {
     return { success: true }
   } catch (e) {
     console.error(e)
-    return { error: 'Failed to save votes' }
+    return { error: 'Failed to save votes', errorKey: 'failedToSaveVotes' }
   }
 }
 
@@ -236,9 +257,9 @@ export async function getAdminData() {
   return { users }
 }
 
-export async function resetVotes() {
+export async function resetVotes(): Promise<ErrorResponse | SuccessResponse> {
   const session = await getSession()
-  if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' }
+  if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized', errorKey: 'unauthorized' }
 
   try {
     await prisma.vote.deleteMany({})
@@ -246,13 +267,13 @@ export async function resetVotes() {
     revalidatePath('/gallery')
     return { success: true }
   } catch (e) {
-    return { error: 'Failed to reset votes' }
+    return { error: 'Failed to reset votes', errorKey: 'failedToResetVotes' }
   }
 }
 
-export async function clearAllSubmissions() {
+export async function clearAllSubmissions(): Promise<ErrorResponse | SuccessResponse> {
   const session = await getSession()
-  if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' }
+  if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized', errorKey: 'unauthorized' }
 
   try {
     // Due to cascade delete on Vote model, this will also delete all votes associated with submissions
@@ -263,13 +284,13 @@ export async function clearAllSubmissions() {
     return { success: true }
   } catch (e) {
     console.error(e)
-    return { error: 'Failed to clear all submissions' }
+    return { error: 'Failed to clear all submissions', errorKey: 'failedToClearSubmissions' }
   }
 }
 
-export async function clearAllUsers() {
+export async function clearAllUsers(): Promise<ErrorResponse | SuccessResponse> {
   const session = await getSession()
-  if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized' }
+  if (!session || session.role !== 'ADMIN') return { error: 'Unauthorized', errorKey: 'unauthorized' }
 
   try {
     // Clean up everything
@@ -290,7 +311,7 @@ export async function clearAllUsers() {
     return { success: true }
   } catch (e) {
     console.error(e)
-    return { error: 'Failed to clear all users' }
+    return { error: 'Failed to clear all users', errorKey: 'failedToClearUsers' }
   }
 }
 
@@ -319,4 +340,3 @@ export async function getGalleryData() {
     return a.nickname.localeCompare(b.nickname)
   })
 }
-
