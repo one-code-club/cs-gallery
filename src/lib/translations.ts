@@ -33,6 +33,9 @@ export const translations = {
       successMessage: 'Submission saved!',
       currentSubmission: 'Current Submission:',
       locationDisplay: 'Location:',
+      successModalTitle: '🎉 Congratulations!',
+      successModalMessage: 'Your work is complete!',
+      successModalButton: 'Awesome!',
     },
     // Gallery
     gallery: {
@@ -46,6 +49,9 @@ export const translations = {
       saving: 'Saving...',
       votesLabel: 'votes',
       maxVotesAlert: 'You can only vote for up to {max} submissions.',
+      saveSuccessTitle: 'Success',
+      saveSuccessMessage: 'Your votes have been saved successfully!',
+      closeButton: 'Close',
     },
     // Admin
     admin: {
@@ -130,6 +136,9 @@ export const translations = {
       successMessage: '提出が保存されました！',
       currentSubmission: '現在の提出:',
       locationDisplay: '場所:',
+      successModalTitle: '🎉 作品完成、おめでとう！',
+      successModalMessage: 'すばらしい作品ができましたね！',
+      successModalButton: 'やったー！',
     },
     // Gallery
     gallery: {
@@ -143,6 +152,9 @@ export const translations = {
       saving: '保存中...',
       votesLabel: '票',
       maxVotesAlert: '最大{max}件まで投票できます。',
+      saveSuccessTitle: '成功',
+      saveSuccessMessage: '投票が正常に保存されました！',
+      closeButton: '閉じる',
     },
     // Admin
     admin: {
@@ -227,6 +239,9 @@ type TranslationStructure = {
     successMessage: string
     currentSubmission: string
     locationDisplay: string
+    successModalTitle: string
+    successModalMessage: string
+    successModalButton: string
   }
   gallery: {
     title: string
@@ -238,6 +253,9 @@ type TranslationStructure = {
     saving: string
     votesLabel: string
     maxVotesAlert: string
+    saveSuccessTitle: string
+    saveSuccessMessage: string
+    closeButton: string
   }
   admin: {
     title: string

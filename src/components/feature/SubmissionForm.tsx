@@ -12,15 +12,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useActionState } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { useActionState, useEffect, useState } from 'react'
 import { useLanguage } from '@/components/language-provider'
 import { formatMessage } from '@/lib/translations'
 import { LOCATIONS, getLocationLabel } from '@/lib/locations'
+import confetti from 'canvas-confetti'
 
 type SubmissionResult = Awaited<ReturnType<typeof submitUrl>>
 
 export function SubmissionForm({ initialUrl, initialLocation }: { initialUrl?: string | null; initialLocation?: string | null }) {
   const { t } = useLanguage()
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
   
   const [state, formAction, isPending] = useActionState<SubmissionResult | undefined, FormData>(
     async (_prev, formData) => {
@@ -32,6 +42,40 @@ export function SubmissionForm({ initialUrl, initialLocation }: { initialUrl?: s
   // Check if state has error
   const hasError = state && 'error' in state
   const hasSuccess = state && 'success' in state
+
+  // Show success modal and confetti when submission is successful
+  useEffect(() => {
+    if (hasSuccess) {
+      setShowSuccessModal(true)
+      // Fire confetti!
+      const duration = 3000
+      const end = Date.now() + duration
+
+      const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#ff69b4']
+      
+      const frame = () => {
+        confetti({
+          particleCount: 7,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0, y: 0.7 },
+          colors: colors,
+        })
+        confetti({
+          particleCount: 7,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1, y: 0.7 },
+          colors: colors,
+        })
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame)
+        }
+      }
+      frame()
+    }
+  }, [hasSuccess])
 
   // Translate error message based on errorKey if available
   const getErrorMessage = () => {
@@ -54,6 +98,7 @@ export function SubmissionForm({ initialUrl, initialLocation }: { initialUrl?: s
   }
 
   return (
+    <>
     <Card>
       <CardHeader>
         <CardTitle>{t.submission.cardTitle}</CardTitle>
@@ -111,5 +156,29 @@ export function SubmissionForm({ initialUrl, initialLocation }: { initialUrl?: s
         )}
       </CardContent>
     </Card>
+
+    {/* Success Modal */}
+    <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+      <DialogContent className="sm:max-w-md text-center" showCloseButton={false}>
+        <DialogHeader className="items-center">
+          <div className="text-6xl mb-4 animate-bounce">🎊</div>
+          <DialogTitle className="text-2xl text-center">
+            {t.submission.successModalTitle}
+          </DialogTitle>
+          <DialogDescription className="text-center text-lg">
+            {t.submission.successModalMessage}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="sm:justify-center mt-4">
+          <Button 
+            onClick={() => setShowSuccessModal(false)}
+            className="px-8 py-2 text-lg"
+          >
+            {t.submission.successModalButton}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   )
 }

@@ -4,7 +4,15 @@ import { useState, useEffect } from 'react'
 import { getSubmissionsForTA, saveVotes } from '@/lib/actions'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Heart } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Heart, CheckCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useLanguage } from '@/components/language-provider'
 import { formatMessage } from '@/lib/translations'
@@ -26,6 +34,7 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
     new Set(initialData.filter(s => s.votedByMe).map(s => s.id))
   )
   const [isSaving, setIsSaving] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -66,6 +75,7 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
     } else {
         const data = await getSubmissionsForTA()
         setSubmissions(data)
+        setShowSuccessModal(true)
     }
     setIsSaving(false)
   }
@@ -131,6 +141,26 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
             )
         })}
       </div>
+
+      {/* Success Modal */}
+      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <CheckCircle className="h-6 w-6 text-green-500" />
+              <DialogTitle>{t.voting.saveSuccessTitle}</DialogTitle>
+            </div>
+            <DialogDescription className="pt-2">
+              {t.voting.saveSuccessMessage}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setShowSuccessModal(false)}>
+              {t.voting.closeButton}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
