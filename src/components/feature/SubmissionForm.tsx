@@ -29,9 +29,13 @@ export function SubmissionForm({ initialUrl, initialLocation }: { initialUrl?: s
     undefined
   )
 
+  // Check if state has error
+  const hasError = state && 'error' in state
+  const hasSuccess = state && 'success' in state
+
   // Translate error message based on errorKey if available
   const getErrorMessage = () => {
-    if (!state?.error) return ''
+    if (!hasError || !state.error) return ''
     if (state.errorKey) {
       const errorMessages: Record<string, string> = {
         unauthorized: t.errors.unauthorized,
@@ -82,10 +86,10 @@ export function SubmissionForm({ initialUrl, initialLocation }: { initialUrl?: s
             </Select>
           </div>
           
-          {state?.error && (
+          {hasError && (
              <p className="text-red-500 text-sm">{getErrorMessage()}</p>
           )}
-          {state?.success && (
+          {hasSuccess && (
              <p className="text-green-500 text-sm">{t.submission.successMessage}</p>
           )}
 

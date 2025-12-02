@@ -52,7 +52,7 @@ export function VotingInterface({ initialData, maxVotes }: { initialData: Submis
   const handleSave = async () => {
     setIsSaving(true)
     const result = await saveVotes(Array.from(selectedIds))
-    if (result.error) {
+    if ('error' in result) {
       // Translate error if errorKey is available
       if (result.errorKey === 'maxVotesAllowed' && result.errorParams?.max) {
         alert(formatMessage(t.errors.maxVotesAllowed, { max: result.errorParams.max }))

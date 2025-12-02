@@ -30,7 +30,7 @@ export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
 
     const handleReset = async () => {
         const res = await resetVotes()
-        if (res.success) {
+        if ('success' in res) {
             alert(t.admin.votesResetSuccess)
             router.refresh()
         } else {
@@ -40,7 +40,7 @@ export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
 
     const handleClearSubmissions = async () => {
         const res = await clearAllSubmissions()
-        if (res.success) {
+        if ('success' in res) {
             alert(t.admin.submissionsClearedSuccess)
             router.refresh()
         } else {
@@ -50,7 +50,7 @@ export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
 
     const handleClearUsers = async () => {
         const res = await clearAllUsers()
-        if (res.success) {
+        if ('success' in res) {
             alert(t.admin.usersClearedSuccess)
             router.refresh()
         } else {

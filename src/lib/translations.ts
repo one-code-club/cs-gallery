@@ -193,9 +193,98 @@ export const translations = {
       japanese: '日本語',
     },
   },
-} as const
+}
 
-export type TranslationKeys = typeof translations.en
+// Define the structure type based on English translations
+type TranslationStructure = {
+  header: {
+    title: string
+    gallery: string
+    vote: string
+    logout: string
+    login: string
+  }
+  login: {
+    title: string
+    description: string
+    nicknameLabel: string
+    nicknamePlaceholder: string
+    submitButton: string
+    submitting: string
+    unexpectedError: string
+  }
+  submission: {
+    pageTitle: string
+    cardTitle: string
+    urlPlaceholder: string
+    locationLabel: string
+    locationPlaceholder: string
+    submitButton: string
+    updateButton: string
+    submitting: string
+    successMessage: string
+    currentSubmission: string
+    locationDisplay: string
+  }
+  gallery: {
+    title: string
+  }
+  voting: {
+    title: string
+    votes: string
+    submitButton: string
+    saving: string
+    votesLabel: string
+    maxVotesAlert: string
+  }
+  admin: {
+    title: string
+    clearAllUsers: string
+    clearAllSubmissions: string
+    resetAllVotes: string
+    confirmTitle: string
+    confirmClearUsers: string
+    confirmClearSubmissions: string
+    confirmResetVotes: string
+    cancel: string
+    continue: string
+    tableRole: string
+    tableNickname: string
+    tableIpAddress: string
+    tableSubmitted: string
+    yes: string
+    no: string
+    votesResetSuccess: string
+    votesResetError: string
+    submissionsClearedSuccess: string
+    submissionsClearedError: string
+    usersClearedSuccess: string
+    usersClearedError: string
+  }
+  errors: {
+    nicknameRequired: string
+    invalidNickname: string
+    databaseError: string
+    unauthorized: string
+    urlRequired: string
+    locationRequired: string
+    invalidLocation: string
+    urlMustContain: string
+    failedToSubmit: string
+    maxVotesAllowed: string
+    failedToSaveVotes: string
+    failedToResetVotes: string
+    failedToClearSubmissions: string
+    failedToClearUsers: string
+  }
+  language: {
+    toggle: string
+    english: string
+    japanese: string
+  }
+}
+
+export type TranslationKeys = TranslationStructure
 
 export function getTranslations(lang: Language): TranslationKeys {
   return translations[lang]
