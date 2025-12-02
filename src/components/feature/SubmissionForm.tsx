@@ -4,11 +4,27 @@ import { submitUrl } from '@/lib/actions'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useActionState } from 'react'
 
 type SubmissionResult = Awaited<ReturnType<typeof submitUrl>>
 
-export function SubmissionForm({ initialUrl }: { initialUrl?: string | null }) {
+const LOCATIONS = [
+  'Zoom Online',
+  'Kawasaki',
+  'Kumamoto',
+  'Noto',
+  'Hakui',
+] as const
+
+export function SubmissionForm({ initialUrl, initialLocation }: { initialUrl?: string | null; initialLocation?: string | null }) {
   const [state, formAction, isPending] = useActionState<SubmissionResult | undefined, FormData>(
     async (_prev, formData) => {
       return await submitUrl(formData)
@@ -32,6 +48,22 @@ export function SubmissionForm({ initialUrl }: { initialUrl?: string | null }) {
               disabled={isPending}
             />
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Select name="location" required defaultValue={initialLocation || ''}>
+              <SelectTrigger id="location" disabled={isPending}>
+                <SelectValue placeholder="Select your location" />
+              </SelectTrigger>
+              <SelectContent>
+                {LOCATIONS.map((loc) => (
+                  <SelectItem key={loc} value={loc}>
+                    {loc}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           
           {state?.error && (
              <p className="text-red-500 text-sm">{state.error}</p>
@@ -51,6 +83,9 @@ export function SubmissionForm({ initialUrl }: { initialUrl?: string | null }) {
                 <a href={initialUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline break-all">
                     {initialUrl}
                 </a>
+                {initialLocation && (
+                  <p className="text-sm text-muted-foreground mt-1">Location: {initialLocation}</p>
+                )}
             </div>
         )}
       </CardContent>

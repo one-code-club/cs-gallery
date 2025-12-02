@@ -9,6 +9,7 @@ interface GalleryItem {
   id: number
   nickname: string
   url: string
+  location: string
   voteCount: number
 }
 
@@ -31,6 +32,7 @@ export function GalleryView({ initialData }: { initialData: GalleryItem[] }) {
                     <Card key={item.id} className="flex flex-col">
                         <CardContent className="pt-6 flex-grow">
                             <h3 className="font-bold text-lg mb-1">{item.nickname}</h3>
+                            <p className="text-sm text-muted-foreground mb-2">{item.location}</p>
                             <a 
                                 href={item.url} 
                                 target="_blank" 

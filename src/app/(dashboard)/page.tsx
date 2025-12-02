@@ -16,7 +16,7 @@ export default async function HomePage() {
   return (
     <div className="max-w-lg mx-auto mt-10">
        <h1 className="text-3xl font-bold mb-6 text-center">Submit Your Work</h1>
-       <SubmissionForm initialUrl={submission?.url} />
+       <SubmissionForm initialUrl={submission?.url} initialLocation={submission?.location} />
     </div>
   )
 }

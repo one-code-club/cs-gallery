@@ -119,6 +119,14 @@ export async function submitUrl(formData: FormData) {
   const url = formData.get('url') as string
   if (!url) return { error: 'URL is required' }
 
+  const location = formData.get('location') as string
+  if (!location) return { error: 'Location is required' }
+
+  const validLocations = ['Zoom Online', 'Kawasaki', 'Kumamoto', 'Noto', 'Hakui']
+  if (!validLocations.includes(location)) {
+    return { error: 'Invalid location' }
+  }
+
   const requiredText = process.env.REQUIRED_TEXT
   if (requiredText && !url.includes(requiredText)) {
     return { error: `URL must contain "${requiredText}"` }
@@ -127,9 +135,10 @@ export async function submitUrl(formData: FormData) {
   try {
     await prisma.submission.upsert({
       where: { userId: session.ip },
-      update: { url: url, updatedAt: new Date() },
+      update: { url: url, location: location, updatedAt: new Date() },
       create: {
         url: url,
+        location: location,
         userId: session.ip,
       },
     })
@@ -298,6 +307,7 @@ export async function getGalleryData() {
     id: s.id,
     nickname: s.user.nickname,
     url: s.url,
+    location: s.location,
     voteCount: s.votes.length
   }))
 
