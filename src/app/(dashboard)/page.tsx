@@ -11,7 +11,7 @@ export default async function HomePage() {
   if (session.role === 'TA') redirect('/voting')
 
   const submission = await prisma.submission.findUnique({
-    where: { userId: session.ip }
+    where: { userId: session.deviceId }
   })
 
   return (

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { useActionState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { useLanguage } from '@/components/language-provider'
 import { LanguageToggle } from '@/components/feature/LanguageToggle'
 
@@ -14,8 +14,30 @@ const initialState = {
   errorKey: '' as string,
 }
 
+// デバイスIDを取得または生成する関数
+function getOrCreateDeviceId(): string {
+  const STORAGE_KEY = 'gallery_device_id'
+  
+  // 既存のデバイスIDを取得
+  let deviceId = localStorage.getItem(STORAGE_KEY)
+  
+  if (!deviceId) {
+    // 新しいUUIDを生成
+    deviceId = crypto.randomUUID()
+    localStorage.setItem(STORAGE_KEY, deviceId)
+  }
+  
+  return deviceId
+}
+
 export default function LoginPage() {
   const { t } = useLanguage()
+  const [deviceId, setDeviceId] = useState<string>('')
+  
+  // クライアント側でのみデバイスIDを取得
+  useEffect(() => {
+    setDeviceId(getOrCreateDeviceId())
+  }, [])
   
   const [state, formAction, isPending] = useActionState(async (prevState: any, formData: FormData) => {
       try {
@@ -35,6 +57,7 @@ export default function LoginPage() {
         nicknameRequired: t.errors.nicknameRequired,
         invalidNickname: t.errors.invalidNickname,
         databaseError: t.errors.databaseError,
+        deviceIdRequired: t.errors.deviceIdRequired || 'Device ID is required',
       }
       return errorMessages[state.errorKey] || state.error
     }
@@ -53,6 +76,8 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form action={formAction} className="space-y-4">
+            {/* 隠しフィールドでデバイスIDを送信 */}
+            <input type="hidden" name="deviceId" value={deviceId} />
             <div className="space-y-2">
               <Label htmlFor="nickname">{t.login.nicknameLabel}</Label>
               <Input 
@@ -60,7 +85,7 @@ export default function LoginPage() {
                 name="nickname" 
                 placeholder={t.login.nicknamePlaceholder}
                 required 
-                disabled={isPending}
+                disabled={isPending || !deviceId}
               />
             </div>
             {state.error && (
@@ -68,7 +93,7 @@ export default function LoginPage() {
                 {getErrorMessage()}
               </div>
             )}
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <Button type="submit" className="w-full" disabled={isPending || !deviceId}>
               {isPending ? t.login.submitting : t.login.submitButton}
             </Button>
           </form>

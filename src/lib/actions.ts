@@ -38,7 +38,7 @@ export async function getSession() {
   const session = cookieStore.get(COOKIE_NAME)
   if (!session) return null
   try {
-    return JSON.parse(session.value) as { ip: string; role: Role; nickname: string }
+    return JSON.parse(session.value) as { deviceId: string; role: Role; nickname: string }
   } catch {
     return null
   }
@@ -46,8 +46,14 @@ export async function getSession() {
 
 export async function login(formData: FormData): Promise<ErrorResponse | void> {
   const nicknameInput = formData.get('nickname') as string
+  const deviceId = formData.get('deviceId') as string
+  
   if (!nicknameInput || nicknameInput.trim() === '') {
     return { error: 'Nickname is required', errorKey: 'nicknameRequired' }
+  }
+
+  if (!deviceId || deviceId.trim() === '') {
+    return { error: 'Device ID is required', errorKey: 'deviceIdRequired' }
   }
 
   const ip = await getClientIp()
@@ -83,16 +89,18 @@ export async function login(formData: FormData): Promise<ErrorResponse | void> {
 
   try {
     await prisma.user.upsert({
-      where: { ipAddress: ip },
+      where: { deviceId: deviceId },
       update: {
         nickname: cleanNickname,
         role: role,
+        ipAddress: ip,
         lastLoginAt: new Date(),
       },
       create: {
-        ipAddress: ip,
+        deviceId: deviceId,
         nickname: cleanNickname,
         role: role,
+        ipAddress: ip,
         lastLoginAt: new Date(),
       },
     })
@@ -102,7 +110,7 @@ export async function login(formData: FormData): Promise<ErrorResponse | void> {
   }
 
   const cookieStore = await cookies()
-  cookieStore.set(COOKIE_NAME, JSON.stringify({ ip, role, nickname: cleanNickname }), {
+  cookieStore.set(COOKIE_NAME, JSON.stringify({ deviceId, role, nickname: cleanNickname }), {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -149,12 +157,12 @@ export async function submitUrl(formData: FormData): Promise<ErrorResponse | Suc
 
   try {
     await prisma.submission.upsert({
-      where: { userId: session.ip },
+      where: { userId: session.deviceId },
       update: { url: url, location: location, updatedAt: new Date() },
       create: {
         url: url,
         location: location,
-        userId: session.ip,
+        userId: session.deviceId,
       },
     })
     revalidatePath('/')
@@ -169,7 +177,7 @@ type SubmissionWithVotes = {
   id: number
   url: string
   user: { nickname: string }
-  votes: { voterIp: string }[]
+  votes: { voterId: string }[]
 }
 
 export async function getSubmissionsForTA() {
@@ -195,7 +203,7 @@ export async function getSubmissionsForTA() {
   return submissions.map(sub => ({
     ...sub,
     voteCount: sub.votes.length,
-    votedByMe: sub.votes.some(v => v.voterIp === session.ip)
+    votedByMe: sub.votes.some(v => v.voterId === session.deviceId)
   }))
 }
 
@@ -217,7 +225,7 @@ export async function saveVotes(submissionIds: number[]): Promise<ErrorResponse 
     await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Remove all votes by this TA
       await tx.vote.deleteMany({
-        where: { voterIp: session.ip }
+        where: { voterId: session.deviceId }
       })
 
       // 2. Add new votes
@@ -225,7 +233,7 @@ export async function saveVotes(submissionIds: number[]): Promise<ErrorResponse 
         await tx.vote.createMany({
           data: submissionIds.map(id => ({
             submissionId: id,
-            voterIp: session.ip
+            voterId: session.deviceId
           }))
         })
       }

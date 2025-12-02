@@ -77,6 +77,7 @@ export const translations = {
     errors: {
       nicknameRequired: 'Nickname is required',
       invalidNickname: 'Invalid nickname',
+      deviceIdRequired: 'Device ID is required. Please enable JavaScript and cookies.',
       databaseError: 'Database error during login',
       unauthorized: 'Unauthorized',
       urlRequired: 'URL is required',
@@ -173,6 +174,7 @@ export const translations = {
     errors: {
       nicknameRequired: 'ニックネームは必須です',
       invalidNickname: '無効なニックネームです',
+      deviceIdRequired: 'デバイスIDが必要です。JavaScriptとCookieを有効にしてください。',
       databaseError: 'ログイン中にデータベースエラーが発生しました',
       unauthorized: '権限がありません',
       urlRequired: 'URLは必須です',
@@ -264,6 +266,7 @@ type TranslationStructure = {
   errors: {
     nicknameRequired: string
     invalidNickname: string
+    deviceIdRequired: string
     databaseError: string
     unauthorized: string
     urlRequired: string

@@ -18,7 +18,8 @@ import {
 import { useLanguage } from '@/components/language-provider'
 
 interface User {
-    ipAddress: string
+    deviceId: string
+    ipAddress: string | null
     nickname: string
     role: string
     submission: any
@@ -131,10 +132,10 @@ export function AdminDashboard({ initialUsers }: { initialUsers: User[] }) {
                     </TableHeader>
                     <TableBody>
                         {initialUsers.map((user) => (
-                            <TableRow key={user.ipAddress}>
+                            <TableRow key={user.deviceId}>
                                 <TableCell className="font-medium">{user.role}</TableCell>
                                 <TableCell>{user.nickname}</TableCell>
-                                <TableCell className="font-mono text-xs text-muted-foreground">{user.ipAddress}</TableCell>
+                                <TableCell className="font-mono text-xs text-muted-foreground">{user.ipAddress || '-'}</TableCell>
                                 <TableCell>{user.submission ? t.admin.yes : t.admin.no}</TableCell>
                             </TableRow>
                         ))}

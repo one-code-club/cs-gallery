@@ -7,7 +7,7 @@ import { useLanguage } from '@/components/language-provider'
 import { logout } from '@/lib/actions'
 
 type Session = {
-  ip: string
+  deviceId: string
   role: 'STUDENT' | 'TA' | 'ADMIN'
   nickname: string
 } | null
